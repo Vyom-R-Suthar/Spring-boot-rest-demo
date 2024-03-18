@@ -16,6 +16,7 @@ public class Book {
 	private int id;
 	private String title;
 	private String author;
+	private double price;
 	
 	public int getId() {
 		return id;
@@ -35,21 +36,29 @@ public class Book {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
 	
-	public Book(int id, String title, String author) {
+	public Book(int id, String title, String author, double price) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.author = author;
+		this.price = price;
 	}
 	
 	public Book() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", title=" + title + ", author=" + author + "]";
+		return "Book [id=" + id + ", title=" + title + ", author=" + author + ", price=" + price + "]";
 	}
-
+	
 }
