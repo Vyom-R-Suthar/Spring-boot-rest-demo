@@ -53,6 +53,12 @@ public class BookController {
 		List<Book> sortedBooks = service.getSortedBooks();
 		return (sortedBooks != null? new ResponseEntity<>(sortedBooks,HttpStatus.OK):new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
+	
+	@GetMapping("/books/names")
+	public ResponseEntity<List<String>> getAllBookNames(){
+		List<String> bookNames = service.getAllBookNames();
+		return (bookNames != null? new ResponseEntity<>(bookNames,HttpStatus.OK):new ResponseEntity<>(HttpStatus.NOT_FOUND));
+	}
 
 	@PostMapping("/books")
 	public ResponseEntity<Book> addBook(@RequestBody Book book) {
