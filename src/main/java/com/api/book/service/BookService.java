@@ -46,4 +46,9 @@ public class BookService {
 		List<Book> sortedBooks = repository.findAllByOrderByTitleAsc();
 		return sortedBooks;
 	}
+	
+	public List<String> getAllBookNames(){
+		List<String> bookNames = repository.getAllBookNames();
+		return bookNames;
+	}
 }
