@@ -12,4 +12,4 @@ Requirements for the project:
 <br/>
 -Any IDE you prefer
 <br/>
--Postman(to test api)
+-Postman(to test APIs)
