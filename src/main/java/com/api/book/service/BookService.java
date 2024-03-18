@@ -41,4 +41,9 @@ public class BookService {
 		Book updatedBook = repository.save(book);
 		return updatedBook;
 	}
+
+	public List<Book> getSortedBooks() {
+		List<Book> sortedBooks = repository.findAllByOrderByTitleAsc();
+		return sortedBooks;
+	}
 }
