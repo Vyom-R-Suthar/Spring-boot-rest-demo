@@ -28,10 +28,17 @@ public class BookController {
 	@GetMapping("/books")
 	public ResponseEntity<List<Book>> getBooks() {
 		List<Book> books = service.getBooks();
+		/*
 		if (books.size() <= 0) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		return ResponseEntity.of(Optional.of(books));
+		*/
+		if(books.size() == 0) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}else {
+			return new ResponseEntity<>(books,HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/books/{id}")
