@@ -1,0 +1,249 @@
+<!-- Jai Swaminarayan KESHAV , Swami-Shreeji -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Book Management</title>
+	<link href="https://fonts.googleapis.com/css2?family=Antic+Slab&display=swap" rel="stylesheet">
+	<style>
+		body {
+			font-family: 'Antic Slab', serif;
+			margin: 0;
+			padding: 0;
+			background-color: #272727;
+			/* Dark background color */
+			color: #fff;
+			/* Light text color */
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 20px auto;
+			padding: 20px;
+			background-color: #1f1f1f;
+			/* Dark container background color */
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+			/* Light box shadow */
+		}
+
+		h1 {
+			text-align: center;
+			color: #007bff;
+			/* Primary color for headings */
+		}
+
+		form {
+			margin-top: 20px;
+		}
+
+		input[type="text"],
+		input[type="number"] {
+			width: calc(100% - 10px);
+			padding: 10px;
+			margin: 5px;
+			background-color: #333;
+			/* Dark input background color */
+			border: none;
+			color: #fff;
+			/* Light text color */
+		}
+
+		button {
+			padding: 10px 20px;
+			background-color: #007bff;
+			/* Primary color for buttons */
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			margin-top: 10px;
+		}
+
+		button:hover {
+			background-color: #0056b3;
+			/* Darker shade for hover effect */
+		}
+
+		.book-list {
+			margin-top: 20px;
+		}
+
+		.book-item {
+			background-color: #333;
+			/* Dark book item background color */
+			padding: 10px;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+			/* Light box shadow */
+		}
+
+		.book-item h3 {
+			color: #007bff;
+			/* Primary color for book titles */
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>Book Management App</h1>
+		<form id="bookForm">
+			<input type="hidden" id="id">
+			<input type="text" id="title" placeholder="Title" required><br>
+			<input type="text" id="authorFirstName" placeholder="Author First Name" required><br>
+			<input type="text" id="authorLastName" placeholder="Author Last Name" required><br>
+			<input type="text" id="language" placeholder="Language" required><br>
+			<input type="number" id="price" placeholder="Price" required><br>
+			<button type="submit">Add Book</button>
+			<!--<button type="button" onclick="updateBook()">Update Book</button>-->
+		</form>
+
+		<div class="sort-container">
+			<button class="sort-btn" onclick="sortBooks()">Sorted Books</button>
+		</div>
+
+		<div class="sort-container">
+			<button class="sort-btn" onclick="normalOrderBooks()">Normal Order</button>
+		</div>
+
+		<div class="book-list" id="bookList">
+
+		</div>
+	</div>
+
+	<script>
+		// JavaScript code to interact with Spring Boot backend
+		
+		const bookForm = document.getElementById('bookForm');
+		const bookList = document.getElementById('bookList');
+
+
+		// Function to fetch all books from backend and display
+		async function fetchBooks() {
+			const response = await fetch('/books');
+			const books = await response.json();
+			bookList.innerHTML = '';
+			books.forEach(book => {
+				const bookItem = document.createElement('div');
+				bookItem.classList.add('book-item');
+				bookItem.innerHTML = `
+					<h3>${book.title}</h3>
+					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
+					<p>Language: ${book.author.language}</p>
+					<p>Price: $${book.price}</p>
+					<button onclick="deleteBook(${book.id})">Delete</button>
+				`;
+				bookList.appendChild(bookItem);
+			});
+		}
+
+		async function sortBooks() {
+			// const sortOrder = sortOrderSelect.value;
+			const response = await fetch(`/books/sorted`);
+			const books = await response.json();
+			bookList.innerHTML = '';
+			books.forEach(book => {
+				const bookItem = document.createElement('div');
+				bookItem.classList.add('book-item');
+				bookItem.innerHTML = `
+					<h3>${book.title}</h3>
+					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
+					<p>Language: ${book.author.language}</p>
+					<p>Price: $${book.price}</p>
+					<button onclick="deleteBook(${book.id})">Delete</button>
+				`;
+				bookList.appendChild(bookItem);
+			});
+		}
+
+		async function normalOrderBooks() {
+			// const sortOrder = sortOrderSelect.value;
+			const response = await fetch(`/books`);
+			const books = await response.json();
+			bookList.innerHTML = '';
+			books.forEach(book => {
+				const bookItem = document.createElement('div');
+				bookItem.classList.add('book-item');
+				bookItem.innerHTML = `
+					<h3>${book.title}</h3>
+					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
+					<p>Language: ${book.author.language}</p>
+					<p>Price: $${book.price}</p>
+					<button onclick="deleteBook(${book.id})">Delete</button>
+				`;
+				bookList.appendChild(bookItem);
+			});
+		}
+
+		// Function to add a new book
+		async function addBook(event) {
+			event.preventDefault();
+			const title = document.getElementById('title').value;
+			const authorFirstName = document.getElementById('authorFirstName').value;
+			const authorLastName = document.getElementById('authorLastName').value;
+			const language = document.getElementById('language').value;
+			const price = document.getElementById('price').value;
+			const author = {firstName: authorFirstName, lastName: authorLastName, language: language};
+			const data = {title, author, price};
+			const response = await fetch('/books', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			});
+			if (response.ok) {
+				fetchBooks();
+				bookForm.reset();
+			}
+		}
+
+		// Function to update a book
+		async function updateBook() {
+			const bookId = document.getElementById('bookId').value;
+			const title = document.getElementById('title').value;
+			const authorFirstName = document.getElementById('authorFirstName').value;
+			const authorLastName = document.getElementById('authorLastName').value;
+			const language = document.getElementById('language').value;
+			const price = document.getElementById('price').value;
+			const author = {firstName: authorFirstName, lastName: authorLastName, language: language};
+			const data = {id: bookId, title, author, price};
+			const response = await fetch(`/books/${bookId}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			});
+			if (response.ok) {
+				fetchBooks();
+				bookForm.reset();
+				document.getElementById('submitButton').innerText = 'Add Book';
+			}
+		}
+
+
+		// Function to delete a book by id
+		async function deleteBook(bookId) {
+			const response = await fetch(`/books/${bookId}`, {
+				method: 'DELETE'
+			});
+			if (response.ok) {
+				fetchBooks();
+			}
+		}
+
+		// Fetch books when page loads
+		fetchBooks();
+
+		// Add event listener to form submit
+		bookForm.addEventListener('submit', addBook);
+
+	</script>
+</body>
+
+</html>
