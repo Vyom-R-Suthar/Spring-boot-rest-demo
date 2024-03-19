@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Book Management</title>
+	<title>Book Management App</title>
 	<link href="https://fonts.googleapis.com/css2?family=Antic+Slab&display=swap" rel="stylesheet">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -200,22 +200,27 @@
 			justify-content: center;
 			flex-direction: column;
 		}
-		
-		.deletebtn{
+
+		.deletebtn {
 			background-color: #fb0303;
 		}
-		
-		.deletebtn:hover{
+
+		.deletebtn:hover {
 			background-color: #b60505;
 		}
-		
-		.updatebtn{
+
+		.updatebtn {
 			background-color: #f87d3b;
 		}
-		
-		.updatebtn:hover{
+
+		.updatebtn:hover {
 			background-color: #d85813;
 		}
+
+		#addbtn[disabled] {
+			cursor: not-allowed;
+		}
+		
 	</style>
 </head>
 
@@ -240,8 +245,8 @@
 			<input type="text" id="language" placeholder="Language" required><br>
 			<input type="number" id="price" placeholder="Price" required><br>
 			<div class="search-container">
-				<button type="submit" style="margin-right: 10px;">Add Book</button>
-				<button type="reset">Clear Book</button>
+				<button id="addbtn" type="submit" style="margin-right: 10px;">Add Book</button>
+				<button type="reset" onclick="clearbtn()">Clear Book</button>
 			</div>
 			<!--<button type="button" onclick="updateBook()">Update Book</button>-->
 		</form>
@@ -418,11 +423,17 @@
 				document.getElementById('authorLastName').value = book.author.lastName;
 				document.getElementById('language').value = book.author.language;
 				document.getElementById('price').value = book.price;
+				const addBtn = document.getElementById('addbtn');
+				addBtn.disabled = true;
 			} else {
 				alert('Book not found!');
 			}
 		}
 
+		function clearbtn() {
+			const addBtn = document.getElementById('addbtn');
+			addBtn.disabled = false;
+		}
 		// Function to show the delete confirmation popup
 		function showDeleteConfirmation(bookId) {
 			const confirmationOverlay = document.getElementById('confirmationOverlay');
@@ -555,7 +566,7 @@
 		function hideUpdatePopup() {
 			document.getElementById('updatePopup').style.display = 'none';
 		}
-		
+
 		// Function to delete a book by id
 		/*
 		async function deleteBook(bookId) {
