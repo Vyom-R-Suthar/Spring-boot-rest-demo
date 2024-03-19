@@ -7,6 +7,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Book Management</title>
 	<link href="https://fonts.googleapis.com/css2?family=Antic+Slab&display=swap" rel="stylesheet">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<style>
 		body {
 			font-family: 'Antic Slab', serif;
@@ -39,9 +41,52 @@
 			margin-top: 20px;
 		}
 
+		/* Modified CSS to center-align the search button */
+
+		.search-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 10px;
+		}
+
+		.search-container input[type="text"] {
+			margin-right: 5px;
+		}
+
+		.search-container button {
+			padding: 10px 20px;
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.filter-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 10px;
+		}
+
+
+		.filter-container button {
+			padding: 10px 20px;
+			background-color: rgb(63, 206, 20);
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.filter-container button:hover {
+			background-color: rgb(43, 141, 13);
+		}
+
 		input[type="text"],
 		input[type="number"] {
-			width: calc(100% - 10px);
+			width: calc(100% - 20px);
 			padding: 10px;
 			margin: 5px;
 			background-color: #333;
@@ -51,10 +96,10 @@
 			/* Light text color */
 		}
 
+
 		button {
 			padding: 10px 20px;
 			background-color: #007bff;
-			/* Primary color for buttons */
 			color: #fff;
 			border: none;
 			border-radius: 4px;
@@ -64,8 +109,19 @@
 
 		button:hover {
 			background-color: #0056b3;
-			/* Darker shade for hover effect */
 		}
+
+		/* CSS for separator line */
+		.separator {
+			margin: 20px auto;
+			/* Adjust margin as needed */
+			width: 80%;
+			/* Adjust width as needed */
+			border: none;
+			border-top: 2px solid #333;
+			/* Color of the separator line */
+		}
+
 
 		.book-list {
 			margin-top: 20px;
@@ -85,39 +141,125 @@
 			color: #007bff;
 			/* Primary color for book titles */
 		}
+
+		.overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			/* Semi-transparent black background */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;
+			/* Ensure the overlay is on top of everything */
+		}
+
+		.popup {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+			text-align: center;
+		}
+
+		.popup p {
+			color: #000;
+		}
+
+		.popup-buttons {
+			margin-top: 20px;
+		}
+
+		.popup-buttons button {
+			padding: 10px 20px;
+			margin: 0 10px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.popup-buttons button.primary {
+			background-color: #007bff;
+			/* Primary color for confirmation button */
+			color: #fff;
+		}
+
+		.popup-buttons button.secondary {
+			background-color: #ccc;
+			/* Secondary color for cancel button */
+			color: #000;
+		}
+
+		.heading-container {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
 	</style>
 </head>
 
 <body>
 	<div class="container">
-		<h1>Book Management App</h1>
+		<div class="heading-container">
+			<img src="1903162.png" style="height: 80px;width: 80px;" />
+			<h1>Book Management App</h1>
+		</div>
 		<form id="bookForm">
+			<input type="hidden" id="id">
+			<input type="text" id="searchId" placeholder="Enter Book ID to Search">
+			<div class="search-container">
+				<button type="button" onclick="searchBook()">Search</button>
+			</div>
+			<br>
+
 			<input type="hidden" id="id">
 			<input type="text" id="title" placeholder="Title" required><br>
 			<input type="text" id="authorFirstName" placeholder="Author First Name" required><br>
 			<input type="text" id="authorLastName" placeholder="Author Last Name" required><br>
 			<input type="text" id="language" placeholder="Language" required><br>
 			<input type="number" id="price" placeholder="Price" required><br>
-			<button type="submit">Add Book</button>
+			<div class="search-container">
+				<button type="submit" style="margin-right: 10px;">Add Book</button>
+				<button type="reset">Clear Book</button>
+			</div>
 			<!--<button type="button" onclick="updateBook()">Update Book</button>-->
 		</form>
 
-		<div class="sort-container">
-			<button class="sort-btn" onclick="sortBooks()">Sorted Books</button>
-		</div>
+		<!-- Separator line -->
+		<hr class="separator">
 
-		<div class="sort-container">
-			<button class="sort-btn" onclick="normalOrderBooks()">Normal Order</button>
-		</div>
+		<div class="filter-container">
+			<div class="sort-container">
+				<button class="sortbtn" onclick="sortBooks()" style="margin-right: 10px;">Sorted Books</button>
+			</div>
 
+			<div class="sort-container">
+				<button class="sortbtn" onclick="normalOrderBooks()">Normal Order</button>
+			</div>
+		</div>
 		<div class="book-list" id="bookList">
 
 		</div>
 	</div>
 
+	<!-- Popup confirmation dialog -->
+	<div id="confirmationOverlay" class="overlay" style="display: none;">
+		<div class="popup">
+			<p>Are you sure you want to delete this book?</p>
+			<div class="popup-buttons">
+				<button class="primary" onclick="confirmDeleteBook()">Yes</button>
+				<button class="secondary" onclick="cancelDelete()">No</button>
+			</div>
+		</div>
+	</div>
+
 	<script>
 		// JavaScript code to interact with Spring Boot backend
-		
+
 		const bookForm = document.getElementById('bookForm');
 		const bookList = document.getElementById('bookList');
 
@@ -131,11 +273,12 @@
 				const bookItem = document.createElement('div');
 				bookItem.classList.add('book-item');
 				bookItem.innerHTML = `
-					<h3>${book.title}</h3>
+					<h3>${book.id} .</h3>
+					<h3>${book.title} .</h3>
 					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
-					<button onclick="deleteBook(${book.id})">Delete</button>
+					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -150,11 +293,12 @@
 				const bookItem = document.createElement('div');
 				bookItem.classList.add('book-item');
 				bookItem.innerHTML = `
-					<h3>${book.title}</h3>
+					<h3>${book.id} .</h3>
+					<h3>${book.title} .</h3>
 					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
-					<button onclick="deleteBook(${book.id})">Delete</button>
+					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -169,11 +313,12 @@
 				const bookItem = document.createElement('div');
 				bookItem.classList.add('book-item');
 				bookItem.innerHTML = `
-					<h3>${book.title}</h3>
+					<h3>${book.id} .</h3>
+					<h3>${book.title} .</h3>
 					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
-					<button onclick="deleteBook(${book.id})">Delete</button>
+					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -199,8 +344,43 @@
 			if (response.ok) {
 				fetchBooks();
 				bookForm.reset();
+
+				const Toast = Swal.mixin({
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					didOpen: (toast) => {
+						toast.addEventListener('mouseenter', Swal.stopTimer)
+						toast.addEventListener('mouseleave', Swal.resumeTimer)
+					}
+				})
+
+				Toast.fire({
+					icon: 'success',
+					title: 'Book added !'
+				})
 			}
 		}
+
+		// Function to search for a book by ID
+		async function searchBook() {
+			const searchId = document.getElementById('searchId').value;
+			const response = await fetch(`/books/${searchId}`);
+			if (response.ok) {
+				const book = await response.json();
+				document.getElementById('id').value = book.id;
+				document.getElementById('title').value = book.title;
+				document.getElementById('authorFirstName').value = book.author.firstName;
+				document.getElementById('authorLastName').value = book.author.lastName;
+				document.getElementById('language').value = book.author.language;
+				document.getElementById('price').value = book.price;
+			} else {
+				alert('Book not found!');
+			}
+		}
+
 
 		// Function to update a book
 		async function updateBook() {
@@ -226,9 +406,71 @@
 			}
 		}
 
+		// Function to show the delete confirmation popup
+		function showDeleteConfirmation(bookId) {
+			const confirmationOverlay = document.getElementById('confirmationOverlay');
+			confirmationOverlay.style.display = 'flex'; // Display the overlay
+			// Store the book ID to be deleted in a data attribute of the overlay
+			confirmationOverlay.setAttribute('data-book-id', bookId);
+		}
+
+		async function confirmDeleteBook() {
+			const confirmationOverlay = document.getElementById('confirmationOverlay');
+			const bookId = confirmationOverlay.getAttribute('data-book-id');
+			try {
+				await deleteBook(bookId); // Call delete function with book ID
+				// Hide the confirmation dialog after deletion
+				confirmationOverlay.style.display = 'none';
+				// Fetch updated book list
+				fetchBooks();
+
+				const Toast = Swal.mixin({
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 3000,
+					timerProgressBar: true,
+					didOpen: (toast) => {
+						toast.addEventListener('mouseenter', Swal.stopTimer)
+						toast.addEventListener('mouseleave', Swal.resumeTimer)
+					}
+				})
+
+				Toast.fire({
+					icon: 'success',
+					title: 'Book Successfully deleted !'
+				})
+			} catch (error) {
+				console.error('Error deleting book:', error);
+				// Optionally, display an error message to the user
+				alert('Failed to delete the book. Please try again.');
+			}
+		}
+
+
+		// Function to cancel deletion
+		function cancelDelete() {
+			const confirmationOverlay = document.getElementById('confirmationOverlay');
+			confirmationOverlay.style.display = 'none'; // Hide the confirmation dialog
+		}
+
+
+		// Your existing JavaScript code for deleting books
+		async function deleteBook(bookId) {
+			const response = await fetch(`/books/${bookId}`, {
+				method: 'DELETE'
+			});
+			if (response.ok) {
+				return; // Return from the function after successful deletion
+			} else {
+				throw new Error('Failed to delete book'); // Throw an error if deletion fails
+			}
+		}
 
 		// Function to delete a book by id
+		/*
 		async function deleteBook(bookId) {
+			showDeleteConfirmation(bookId);
 			const response = await fetch(`/books/${bookId}`, {
 				method: 'DELETE'
 			});
@@ -236,6 +478,7 @@
 				fetchBooks();
 			}
 		}
+		*/
 
 		// Fetch books when page loads
 		fetchBooks();

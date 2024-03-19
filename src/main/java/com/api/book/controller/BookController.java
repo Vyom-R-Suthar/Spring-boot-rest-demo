@@ -34,11 +34,14 @@ public class BookController {
 		}
 		return ResponseEntity.of(Optional.of(books));
 		*/
+		/*
 		if(books.size() == 0) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}else {
 			return new ResponseEntity<>(books,HttpStatus.OK);
 		}
+		*/
+		return new ResponseEntity<>(books,HttpStatus.OK);
 	}
 
 	@GetMapping("/books/{id}")
