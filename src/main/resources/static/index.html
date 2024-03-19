@@ -163,6 +163,7 @@
 			border-radius: 8px;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 			text-align: center;
+			color: #000;
 		}
 
 		.popup p {
@@ -257,6 +258,28 @@
 		</div>
 	</div>
 
+	<!-- Popup update dialog -->
+	<div id="updatePopup" class="overlay" style="display: none;">
+		<div class="popup">
+			<div class="updatepopup">
+				<h2>Update Book</h2>
+				<form id="updateForm">
+					<!-- Update form fields -->
+					<input type="hidden" id="updateId">
+					<input type="text" id="updateTitle" placeholder="Title" required><br>
+					<input type="text" id="updateAuthorFirstName" placeholder="Author First Name" required><br>
+					<input type="text" id="updateAuthorLastName" placeholder="Author Last Name" required><br>
+					<input type="text" id="updateLanguage" placeholder="Language" required><br>
+					<input type="number" id="updatePrice" placeholder="Price" required><br>
+					<div class="popup-buttons">
+						<button class="primary" type="button" onclick="updateBook()">Update</button>
+						<button class="secondary" type="button" onclick="hideUpdatePopup()">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
 	<script>
 		// JavaScript code to interact with Spring Boot backend
 
@@ -279,6 +302,7 @@
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
 					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
+					<button onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -299,6 +323,7 @@
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
 					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
+					<button onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -319,6 +344,7 @@
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
 					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
+					<button onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -378,31 +404,6 @@
 				document.getElementById('price').value = book.price;
 			} else {
 				alert('Book not found!');
-			}
-		}
-
-
-		// Function to update a book
-		async function updateBook() {
-			const bookId = document.getElementById('bookId').value;
-			const title = document.getElementById('title').value;
-			const authorFirstName = document.getElementById('authorFirstName').value;
-			const authorLastName = document.getElementById('authorLastName').value;
-			const language = document.getElementById('language').value;
-			const price = document.getElementById('price').value;
-			const author = {firstName: authorFirstName, lastName: authorLastName, language: language};
-			const data = {id: bookId, title, author, price};
-			const response = await fetch(`/books/${bookId}`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(data)
-			});
-			if (response.ok) {
-				fetchBooks();
-				bookForm.reset();
-				document.getElementById('submitButton').innerText = 'Add Book';
 			}
 		}
 
@@ -467,6 +468,78 @@
 			}
 		}
 
+		// Function to show the update popup with existing book details
+		function showUpdatePopup(bookId, title, authorFirstName, authorLastName, language, price) {
+			document.getElementById('updatePopup').style.display = 'flex';
+			document.getElementById('updateId').value = bookId;
+			document.getElementById('updateTitle').value = title;
+			document.getElementById('updateAuthorFirstName').value = authorFirstName;
+			document.getElementById('updateAuthorLastName').value = authorLastName;
+			document.getElementById('updateLanguage').value = language;
+			document.getElementById('updatePrice').value = price;
+		}
+
+		// Function to update the book
+		async function updateBook() {
+			const updateId = document.getElementById('updateId').value;
+			const updateTitle = document.getElementById('updateTitle').value;
+			const updateAuthorFirstName = document.getElementById('updateAuthorFirstName').value;
+			const updateAuthorLastName = document.getElementById('updateAuthorLastName').value;
+			const updateLanguage = document.getElementById('updateLanguage').value;
+			const updatePrice = document.getElementById('updatePrice').value;
+
+			const updateData = {
+				title: updateTitle,
+				author: {
+					firstName: updateAuthorFirstName,
+					lastName: updateAuthorLastName,
+					language: updateLanguage
+				},
+				price: updatePrice
+			};
+
+			try {
+				const response = await fetch(`/books/${updateId}`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(updateData)
+				});
+
+				if (response.ok) {
+					// Book updated successfully
+					// Hide the update popup
+					hideUpdatePopup();
+					// Fetch updated book list
+					fetchBooks();
+					// Show success message
+					Swal.fire({
+						icon: 'success',
+						title: 'Book updated successfully!',
+						showConfirmButton: false,
+						timer: 1500
+					});
+				} else {
+					// Book update failed
+					throw new Error('Failed to update book');
+				}
+			} catch (error) {
+				console.error('Error updating book:', error);
+				// Show error message
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Failed to update book. Please try again.'
+				});
+			}
+		}
+
+		// Function to hide the update popup
+		function hideUpdatePopup() {
+			document.getElementById('updatePopup').style.display = 'none';
+		}
+		
 		// Function to delete a book by id
 		/*
 		async function deleteBook(bookId) {
