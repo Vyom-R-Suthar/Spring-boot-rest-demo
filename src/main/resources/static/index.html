@@ -200,6 +200,22 @@
 			justify-content: center;
 			flex-direction: column;
 		}
+		
+		.deletebtn{
+			background-color: #fb0303;
+		}
+		
+		.deletebtn:hover{
+			background-color: #b60505;
+		}
+		
+		.updatebtn{
+			background-color: #f87d3b;
+		}
+		
+		.updatebtn:hover{
+			background-color: #d85813;
+		}
 	</style>
 </head>
 
@@ -272,7 +288,7 @@
 					<input type="text" id="updateLanguage" placeholder="Language" required><br>
 					<input type="number" id="updatePrice" placeholder="Price" required><br>
 					<div class="popup-buttons">
-						<button class="primary" type="button" onclick="updateBook()">Update</button>
+						<button class="updatebtn" type="button" onclick="updateBook()">Update</button>
 						<button class="secondary" type="button" onclick="hideUpdatePopup()">Cancel</button>
 					</div>
 				</form>
@@ -301,8 +317,8 @@
 					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
-					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
-					<button onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
+					<button class="deletebtn" onclick="showDeleteConfirmation(${book.id})">Delete</button>
+					<button class="updatebtn" onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -322,8 +338,8 @@
 					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
-					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
-					<button onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
+					<button class="deletebtn" onclick="showDeleteConfirmation(${book.id})">Delete</button>
+					<button class="updatebtn" onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
@@ -343,8 +359,8 @@
 					<p>Author: ${book.author.firstName} ${book.author.lastName}</p>
 					<p>Language: ${book.author.language}</p>
 					<p>Price: $${book.price}</p>
-					<button onclick="showDeleteConfirmation(${book.id})">Delete</button>
-					<button onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
+					<button class="deletebtn" onclick="showDeleteConfirmation(${book.id})">Delete</button>
+					<button class="updatebtn" onclick="showUpdatePopup('${book.id}', '${book.title}', '${book.author.firstName}', '${book.author.lastName}', '${book.author.language}', '${book.price}')">Update</button>
 				`;
 				bookList.appendChild(bookItem);
 			});
