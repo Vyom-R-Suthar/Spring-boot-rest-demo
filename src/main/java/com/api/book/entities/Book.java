@@ -1,6 +1,8 @@
 // Jai Swaminarayan KESHAV , Swami-Shreeji
 package com.api.book.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ public class Book {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="authorId")
 	private Author author;
+	
 	public int getId() {
 		return id;
 	}
@@ -47,12 +50,12 @@ public class Book {
 		this.price = price;
 	}
 	
-	public Book(int id, String title, Author author, double price) {
+	public Book(int id, String title, double price, Author author) {
 		super();
 		this.id = id;
 		this.title = title;
-		this.author = author;
 		this.price = price;
+		this.author = author;
 	}
 	
 	public Book() {
@@ -62,7 +65,7 @@ public class Book {
 	
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", title=" + title + ", author=" + author + ", price=" + price + "]";
+		return "Book [id=" + id + ", title=" + title + ", price=" + price + ", author=" + author + "]";
 	}
 	
 }
